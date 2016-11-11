@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+
+	<title>Anuncios</title>
+	<link href="#{request.contextPath}/css/tema.css}" rel="stylesheet" />
+
+</h:head>
+
+<h:body>
+
+
+	
+	<div class="menu">
+		<h:form rendered="#{usuarioBean.verificarSessao()}">
+			<p:growl id="messages" />
+
+			<p:menubar>
+				<p:submenu label="File" icon="ui-icon-document">
+					<p:submenu label="New" icon="ui-icon-contact">
+						<p:menuitem value="Project" url="#" />
+						<p:menuitem value="Other" url="#" />
+					</p:submenu>
+					<p:menuitem value="Open" url="#" />
+					<p:separator />
+					<p:menuitem value="Quit" url="#" />
+				</p:submenu>
+
+				<p:submenu label="Edit" icon="ui-icon-pencil">
+					<p:menuitem value="Undo" url="#"
+						icon="ui-icon-arrowreturnthick-1-w" />
+					<p:menuitem value="Redo" url="#"
+						icon="ui-icon-arrowreturnthick-1-e" />
+				</p:submenu>
+
+				<p:submenu label="Help" icon="ui-icon-help">
+					<p:menuitem value="Contents" url="#" />
+					<p:submenu label="Search" icon="ui-icon-search">
+						<p:submenu label="Text">
+							<p:menuitem value="Workspace" url="#" />
+						</p:submenu>
+						<p:menuitem value="File" url="#" />
+					</p:submenu>
+				</p:submenu>
+
+				<p:submenu label="Actions" icon="ui-icon-gear">
+					<p:submenu label="Ajax" icon="ui-icon-refresh">
+						<p:menuitem value="Save" actionListener="#{menuView.save}"
+							icon="ui-icon-disk" update="messages" />
+						<p:menuitem value="Update" actionListener="#{menuView.update}"
+							icon="ui-icon-arrowrefresh-1-w" update="messages" />
+					</p:submenu>
+					<p:submenu label="Non-Ajax" icon="ui-icon-newwin">
+						<p:menuitem value="Delete" actionListener="#{menuView.delete}"
+							icon="ui-icon-close" update="messages" ajax="false" />
+					</p:submenu>
+				</p:submenu>
+
+				<p:menuitem value="Quit" url="http://www.primefaces.org"
+					icon="ui-icon-close" />
+
+				<f:facet name="options">
+					<p:inputText style="margin-right:10px" placeholder="Search" />
+					<p:commandButton value="Sair" icon="ui-icon-extlink" action="#{usuarioBean.encerrarSessao()}" />
+				</f:facet>
+			</p:menubar>
+		</h:form>
+		
+		
+
+
+
+	</div>	
+	<div class="conteudo">
+		<p:button value="Login" outcome="login" style="margin-bottom:10px; margin-top:10px;" />
+
+		<h2>Quer Vender seu Automovel? Anuncie já!</h2>
+		<p:button value="Cadastra-se" outcome="cadastro"
+			style="margin-bottom:10px;" />
+
+		<h:form>
+
+
+			<p:panel>
+				<p:button value="Anunciar" icon="anuncio-icon" outcome="cadastro_anuncio" style="margin-bottom:10px;" rendered="#{usuarioBean.verificarSessao()}" />
+				<p:growl />
+
+				<p:dataTable id="tbl" value="#{anuncioBean.anuncios}" var="anuncio" paginator="true" rows="5" paginatorTemplate="{CurrentPageReport}  {FirstPageLink}  {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15,20,25,30" >
+
+					<p:column headerText="Nome" sortBy="#{anuncio.nome}"
+                             filterBy="#{anuncio.nome}">
+						<p:outputLabel value="#{anuncio.nome}" />
+					</p:column>
+
+					<p:column headerText="Modelo" sortBy="#{anuncio.modelo}" filterBy="#{anuncio.modelo}">
+						<p:outputLabel value="#{anuncio.modelo}" />
+					</p:column>
+
+					<p:column headerText="Potencia do Motor" filterBy="#{anuncio.potenciaM}">
+						<p:outputLabel value="#{anuncio.potenciaM}" />
+					</p:column>
+
+					<p:column headerText="Valor" filterBy="#{anuncio.valor}">
+						<p:outputLabel value="#{anuncio.valor}" />
+					</p:column>
+
+					<p:column headerText="Ano" filterBy="#{anuncio.ano}">
+						<p:outputLabel value="#{anuncio.ano}" />
+					</p:column>
+
+					<p:column exportable="false">
+					
+						<p:commandLink value="Editar" action="#{anuncioBean.editar(anuncio)}" update="@form" rendered="#{usuarioBean.verificarSessao()}" />
+						<p:commandLink value="Deletar" action="#{anuncioBean.deletar(anuncio)}" update="@form" style="margin-left:10px;" rendered="#{usuarioBean.verificarSessao()}"/>
+						
+					</p:column>
+				</p:dataTable>
+				<br/>
+				<h:commandLink value="Exportar toda a tabela PDF">
+					<p:graphicImage library="image" name="pdf.png" style="width:60px; height:60px" />
+					<p:dataExporter type="pdf" target="tbl" fileName="anuncios" encoding="iso-8859-1" />
+				
+				
+				</h:commandLink>
+				
+				<h:commandLink value="Exportar CSV" style="margin-left:10px" >
+					<p:dataExporter type="csv" target="tbl" fileName="anuncios" encoding="iso-8859-1" />
+				
+				
+				</h:commandLink>
+				
+				<br/>
+				
+				<h:commandLink >
+					<p:graphicImage library="image" name="excel.png" style="width:60px; height:60px" />
+					<p:dataExporter type="xls" target="tbl" fileName="anuncios" encoding="iso-8859-1" />
+				
+				
+				</h:commandLink>
+				<h:commandLink value="Exportar XML" style="margin-left:10px">
+					<p:dataExporter type="xml" target="tbl" fileName="anuncios" encoding="iso-8859-1" />
+					
+			
+				</h:commandLink>
+				
+				<h:commandLink value="Exportar so a pagina em PDF" style="margin-left:10px">
+					<p:dataExporter type="pdf" target="tbl" fileName="anuncios" encoding="iso-8859-1" pageOnly="true" />
+					
+			
+				</h:commandLink>
+
+			</p:panel>
+
+
+
+
+
+		</h:form>
+
+
+
+
+
+	</div>
+
+
+
+
+</h:body>
+
+
+</html>
